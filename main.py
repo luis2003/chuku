@@ -13,6 +13,15 @@ def get_prices_usdt(url):
     return return_list
 
 
+def get_dict_prices_usdt(url):
+    response = requests.get(url)
+    json_data = response.json()
+    return_dict = {}
+    for item in json_data:
+        if 'USDT' in item['symbol']:
+            return_dict[item['symbol']] = item['price']
+    return return_dict
+
 if __name__ == '__main__':
     api_url = 'https://api.binance.com/api/v3/ticker/price'
     usdt_prices_a = get_prices_usdt(api_url)
