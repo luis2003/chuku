@@ -1,6 +1,7 @@
 # Python script for Chuku (notification for prices changes on Binance)
 import requests
 import time
+from pprint import pprint
 
 
 def get_prices_usdt(url):
@@ -19,7 +20,7 @@ def get_dict_prices_usdt(url):
     return_dict = {}
     for item in json_data:
         if 'USDT' in item['symbol']:
-            return_dict[item['symbol']] = item['price']
+            return_dict[item['symbol']] = float(item['price'])
     return return_dict
 
 
@@ -31,25 +32,13 @@ def get_higher_prices(dict1, dict2):
     return result_dict
 
 
-
 if __name__ == '__main__':
     api_url = 'https://api.binance.com/api/v3/ticker/price'
-    usdt_prices_a = get_prices_usdt(api_url)
-    ''' # PRINTING LOGIC
-    for item in usdt_prices:
-        symbol = item['symbol']
-        price = item['price']
-        print(f'Symbol: {symbol} - Price: {price}')
-    '''
+    usdt_prices_a = get_dict_prices_usdt(api_url)
+
     while True:
         time.sleep(3)
-        usdt_prices_b = get_prices_usdt(api_url)
-        # compare logic
-        for item_a in usdt_prices_a:
-            for item_b in usdt_prices_b:
-                if item_a['symbol'] == item_b['symbol'] and item_a['price'] < item_b['price']:
-                    symbol = item_a['symbol']
-                    price = item_a['price']
-                    higher_price = item_b['price']
-                    print(f'Symbol: {symbol} - Price: {price} - Higher Price: {higher_price}')
-        print('-----')
+        usdt_prices_b = get_dict_prices_usdt(api_url)
+        result = get_higher_prices(usdt_prices_a, usdt_prices_b)
+        pprint(result)
+        print('---')
