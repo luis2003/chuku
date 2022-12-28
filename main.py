@@ -41,13 +41,16 @@ def get_higher_percentage_prices(dict1, dict2, percentage):
                 result_dict[key] = dict2[key]
     return result_dict
 
+
 if __name__ == '__main__':
     api_url = 'https://api.binance.com/api/v3/ticker/price'
+    seconds = int(input('Ingresar segundos a esperar entre refresco de datos de Binance:'))
+    percentage = float(input('Ingresar porcentaje de variacion de precios a monitorear:'))
     usdt_prices_a = get_dict_prices_usdt(api_url)
 
     while True:
-        time.sleep(3)
+        time.sleep(seconds)
         usdt_prices_b = get_dict_prices_usdt(api_url)
-        result = get_higher_prices(usdt_prices_a, usdt_prices_b)
+        result = get_higher_percentage_prices(usdt_prices_a, usdt_prices_b, percentage)
         pprint(result)
         print('---')
