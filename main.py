@@ -1,8 +1,6 @@
 # Python script for Chuku (notification for prices changes on Binance)
 import requests
 import time
-from pprint import pprint
-
 
 def get_prices_usdt(url):
     response = requests.get(url)
@@ -45,23 +43,27 @@ def get_higher_percentage_prices(dict1, dict2, percentage):
 if __name__ == '__main__':
     api_url = 'https://api.binance.com/api/v3/ticker/price'
     seconds = int(input('Ingresar SEGUNDOS (a esperar entre refresco de datos de Binance):'))
-    percentage = float(input('Ingresar PORCENTAJE (de variacion de precios a monitorear):'))
+    percentage = float(input('Ingresar PORCENTAJE (de variacion minima del precio a monitorear):'))
     print('---(oprimir Crtl+C para parar el programa)---')
     usdt_prices_a = get_dict_prices_usdt(api_url)
+    t = time.localtime()
+    hist_date_time = time.strftime("%b/%d-%H:%M:%S", t)
 
     try:
         while True:
             time.sleep(seconds)
             usdt_prices_b = get_dict_prices_usdt(api_url)
+            t = time.localtime()
+            refresh_date_time = time.strftime("%b/%d-%H:%M:%S", t)
             result = get_higher_percentage_prices(usdt_prices_a, usdt_prices_b, percentage)
-            # pprint(result)
             for key, value in result.items():
                 symbol = key
                 price = value
                 prev_price = usdt_prices_a[key]
-                perc_diff = ((price / prev_price) - 1) * 100
-                print(f'Nombre: {symbol} - Precio: {price} - Precio Ant.: {prev_price} - '
-                      f'Variacion: {perc_diff}')
-            print('---(oprimir Crtl+C para parar el programa)---')
+                perc_diff = round(((price / prev_price) - 1) * 100, 4)
+                print(f'Nombre: {symbol} - Precio({refresh_date_time}): {price} - '
+                      f'Precio Ant.({hist_date_time}): {prev_price} - '
+                      f'Variacion: {perc_diff}%')
+            print('---(Oprimir Crtl+C para parar el programa)---')
     except KeyboardInterrupt:
         pass
