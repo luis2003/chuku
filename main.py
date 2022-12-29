@@ -1,17 +1,7 @@
-# Python script for Chuku (notification for prices changes on Binance)
+# Python script for Chuku (notification for Crypto price percentual change on Binance)
 import requests
 import time
 from mail import send_email
-
-
-def get_prices_usdt(url):
-    response = requests.get(url)
-    json_data = response.json()
-    return_list = []
-    for item in json_data:
-        if 'USDT' in item['symbol']:
-            return_list.append(item)
-    return return_list
 
 
 def get_dict_prices_usdt(url):
@@ -22,14 +12,6 @@ def get_dict_prices_usdt(url):
         if 'USDT' in item['symbol']:
             return_dict[item['symbol']] = float(item['price'])
     return return_dict
-
-
-def get_higher_prices(dict1, dict2):
-    result_dict = {}
-    for key, value in dict1.items():
-        if key in dict2 and dict2[key] > dict1[key]:
-            result_dict[key] = dict2[key]
-    return result_dict
 
 
 def get_higher_percentage_prices(dict1, dict2, percentage):
@@ -46,6 +28,8 @@ if __name__ == '__main__':
     api_url = 'https://api.binance.com/api/v3/ticker/price'
     seconds = int(input('Ingresar SEGUNDOS (a esperar entre refresco de datos de Binance):'))
     percentage = float(input('Ingresar PORCENTAJE (de variacion minima del precio a monitorear):'))
+    smtp_pass = input('Ingresar CLAVE para servidor de correo (sendinblue):')
+    dest_mail = input('Ingresar DIRECCION CORREO para notificaciones:')
     print('---(oprimir Crtl+C para parar el programa)---')
     usdt_prices_a = get_dict_prices_usdt(api_url)
     t = time.localtime()
@@ -70,7 +54,7 @@ if __name__ == '__main__':
                 print(message)
                 mail_text += message
             if len(mail_text) > 1:
-                send_email(mail_text)
+                send_email(mail_text, smtp_pass, dest_mail)
             print('---(Oprimir Crtl+C para parar el programa)---')
     except KeyboardInterrupt:
         pass

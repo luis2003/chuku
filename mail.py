@@ -2,16 +2,14 @@ import smtplib
 import ssl
 
 
-def send_email(body_text):
+def send_email(body_text, password, receiver_email):
     port = 587
     smtp_server = 'smtp-relay.sendinblue.com'
-    password = 'a6BpGd8Ymr0DTkVn'
 
     # Create a secure SSL context
     context = ssl.create_default_context()
 
     sender_email = "luis2003.dev@gmail.com"
-    receiver_email = "luis2003@gmail.com"
 
     message = """\
 From: {}
