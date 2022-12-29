@@ -1,6 +1,8 @@
 # Python script for Chuku (notification for prices changes on Binance)
 import requests
 import time
+from mail import send_email
+
 
 def get_prices_usdt(url):
     response = requests.get(url)
@@ -56,14 +58,19 @@ if __name__ == '__main__':
             t = time.localtime()
             refresh_date_time = time.strftime("%b/%d-%H:%M:%S", t)
             result = get_higher_percentage_prices(usdt_prices_a, usdt_prices_b, percentage)
+            mail_text = ''
             for key, value in result.items():
                 symbol = key
                 price = value
                 prev_price = usdt_prices_a[key]
                 perc_diff = round(((price / prev_price) - 1) * 100, 4)
-                print(f'Nombre: {symbol} - Precio({refresh_date_time}): {price} - '
-                      f'Precio Ant.({hist_date_time}): {prev_price} - '
-                      f'Variacion: {perc_diff}%')
+                message = f'Nombre: {symbol} - Precio({refresh_date_time}): {price} - ' \
+                          f'Precio Ant.({hist_date_time}): {prev_price} - ' \
+                          f'Variacion: {perc_diff}\n%'
+                print(message)
+                mail_text += message
+            if len(mail_text) > 1:
+                send_email(mail_text)
             print('---(Oprimir Crtl+C para parar el programa)---')
     except KeyboardInterrupt:
         pass
