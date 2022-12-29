@@ -66,7 +66,7 @@ if __name__ == '__main__':
                 perc_diff = round(((price / prev_price) - 1) * 100, 4)
                 message = f'Nombre: {symbol} - Precio({refresh_date_time}): {price} - ' \
                           f'Precio Ant.({hist_date_time}): {prev_price} - ' \
-                          f'Variacion: {perc_diff}\n%'
+                          f'Variacion: {perc_diff}%\n'
                 print(message)
                 mail_text += message
             if len(mail_text) > 1:
